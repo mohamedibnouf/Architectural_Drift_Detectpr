@@ -1,0 +1,19 @@
+/target/
+**/*.rs.bk
+
+# OS-specific
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Reports (generated artifacts)
+add-report.html
+architecture-summary.md

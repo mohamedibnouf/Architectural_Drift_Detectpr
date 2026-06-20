@@ -1,0 +1,57 @@
+# Architectural boundaries for the ADD MVP.
+# Paths use globset syntax and are matched against normalized file/import paths.
+
+layers:
+  presentation:
+    path_patterns:
+      - "**/presentation/**"
+      - "**/ui/**"
+    allowed_dependencies:
+      - domain
+    enforce_interface_boundary: true
+    interface_port_layer: domain
+
+  domain:
+    path_patterns:
+      - "**/domain/**"
+      - "**/core/**"
+    port_path_patterns:
+      - "**/domain/ports/**"
+      - "**/domain/interfaces/**"
+
+  infrastructure:
+    path_patterns:
+      - "**/data/**"
+      - "**/infrastructure/**"
+    enforce_interface_boundary: true
+    interface_port_layer: domain
+
+rules:
+  - name: no-presentation-to-infrastructure
+    description: >
+      UI and presentation code must not depend directly on persistence or
+      infrastructure implementations.
+    source_layers:
+      - presentation
+    forbidden_import_patterns:
+      - "**/data/**"
+      - "**/infrastructure/**"
+    message: "Presentation/UI layers cannot import paths containing /data/ or /infrastructure/."
+    remediation:
+      - "Introduce a domain-facing interface (port) in the domain layer."
+      - "Inject infrastructure implementations at the composition root."
+      - "Move shared DTOs to domain or a dedicated contracts package."
+
+  - name: domain-stays-pure
+    description: "Domain layer must remain independent of outer layers."
+    source_layers:
+      - domain
+    forbidden_import_patterns:
+      - "**/presentation/**"
+      - "**/ui/**"
+      - "**/data/**"
+      - "**/infrastructure/**"
+    message: "Domain layer cannot import presentation or infrastructure modules."
+    remediation:
+      - "Invert the dependency with an interface owned by domain."
+      - "Relocate orchestration code to an application/service layer."

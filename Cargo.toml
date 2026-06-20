@@ -1,0 +1,44 @@
+[package]
+name = "architectural-drift-detector"
+version = "0.1.0"
+edition = "2021"
+description = "High-performance architectural drift detection for TypeScript/TSX via Tree-sitter"
+license = "MIT"
+
+[lib]
+name = "architectural_drift_detector"
+path = "src/lib.rs"
+
+[[bin]]
+name = "add"
+path = "src/main.rs"
+
+[[bench]]
+name = "ast_benchmark"
+harness = false
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+dashmap = "6.1"
+globset = "0.4"
+parking_lot = "0.12"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+thiserror = "2.0"
+tokio = { version = "1", features = ["full"] }
+tower-lsp = "0.20"
+tree-sitter = "0.24"
+tree-sitter-typescript = "0.23"
+walkdir = "2.5"
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+
+[profile.bench]
+inherits = "release"
